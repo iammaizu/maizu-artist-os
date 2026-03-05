@@ -1,166 +1,104 @@
-import React from 'react';
-import { Card, SectionLabel, ActionList, RevenueItem, TagBadge, HighlightBox } from '../components/ui';
+import React, { useState } from 'react';
 
-const REVENUE_STREAMS = [
-  {
-    name: 'Beat Licensing (BeatStars)',
-    description: 'Lease: $29–$99. Exclusive: $250–$500. Upload 10 beats minimum. Focus on Tamil hip-hop and cinematic genres.',
-    potential: 'HIGH',
-    status: 'SETUP',
-  },
-  {
-    name: 'Streaming Royalties (Spotify/Apple)',
-    description: 'Currently generating passive income from 16K+ monthly listeners. Grows with more releases and playlist placement.',
-    potential: 'MED',
-    status: 'ACTIVE',
-  },
-  {
-    name: 'YouTube Ad Revenue',
-    description: 'Monetise at 1,000 subs + 4,000 watch hours. CPM is high for music content. Beats + tutorials both earn.',
-    potential: 'MED',
-    status: 'PLANNED',
-  },
-  {
-    name: 'Sync Licensing',
-    description: 'Pitch Tamil beats to Tamil film/web series production houses. One placement = $500–$5,000+. Long-tail opportunity.',
-    potential: 'HIGH',
-    status: 'PLANNED',
-  },
-  {
-    name: 'Custom Beat Commissions',
-    description: 'Offer bespoke production for Tamil artists ($300–$1,000/track). Market via Twitter/X, DM outreach, and Fiverr.',
-    potential: 'HIGH',
-    status: 'PLANNED',
-  },
-  {
-    name: 'Google Ads (Paid Promotion ROI)',
-    description: 'Invest $5/day in Google/YouTube Ads to grow streams. Treat as a marketing budget that compounds over time.',
-    potential: 'MED',
-    status: 'ACTIVE',
-  },
-  {
-    name: 'Live DJ Sets / Events',
-    description: 'Local Tamil cultural events, college fests, diaspora parties. $200–$1,000 per gig once brand is established.',
-    potential: 'MED',
-    status: 'PLANNED',
-  },
+const T = { t1: '#f0ece4', t2: '#888', t3: '#444', gold: '#c9a84c', blue: '#4f7cff', green: '#3ecf8e', red: '#ff4d6d', amber: '#f59e0b', surface: '#0e0e1a', border: 'rgba(255,255,255,0.06)' };
+
+const STATUS_STYLE = {
+  ACTIVE:  { color: T.green,  bg: 'rgba(62,207,142,0.1)',  border: 'rgba(62,207,142,0.25)' },
+  BUILD:   { color: T.gold,   bg: 'rgba(201,168,76,0.1)',  border: 'rgba(201,168,76,0.25)' },
+  FUTURE:  { color: T.t3,     bg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.08)' },
+};
+
+const STREAMS = [
+  { name: 'Beat Licensing — BeatStars', desc: 'Lease $29–$99 · Exclusive $299+', potential: 'HIGH', status: 'BUILD' },
+  { name: 'Streaming Royalties', desc: 'Spotify + Apple — grows with listeners', potential: 'MED', status: 'ACTIVE' },
+  { name: 'YouTube Ad Revenue', desc: 'Monetise at 1K subs + 4K watch hours', potential: 'MED', status: 'BUILD' },
+  { name: 'Sync Licensing', desc: 'Tamil film/web series placements $500–5K', potential: 'HIGH', status: 'FUTURE' },
+  { name: 'Custom Commissions', desc: 'Bespoke production for Tamil artists $300–1K', potential: 'HIGH', status: 'FUTURE' },
+  { name: 'Google Ads ROI', desc: '$5/day → compounding stream growth', potential: 'MED', status: 'ACTIVE' },
+  { name: 'Live DJ Sets', desc: 'Tamil cultural events $200–1K per gig', potential: 'MED', status: 'FUTURE' },
 ];
 
-const BEATSTARS_ACTIONS = [
-  'Create BeatStars Pro account ($19.99/mo — worth it for unlimited uploads)',
-  'Upload 10 beats in first week — Tamil, cinematic, dark trap genres',
-  'Price leases at: Basic $29 / Premium $69 / Exclusive $299',
-  'Add professional beat cover art (dark aesthetic, consistent branding)',
-  'Tag every beat: "Tamil beat", "Kollywood type beat", "Tamil hip hop", "dark Tamil"',
-  'Link BeatStars to your Instagram bio and Spotify artist profile',
-  'Run a launch discount: "First 48hrs — all leases $19" to drive initial sales',
-  'Activate BeatStars marketing tools — email your buyers automatically',
+const SPRINT = [
+  { task: 'Create BeatStars Pro account + upload 5 beats', done: false },
+  { task: 'Run Google Ads campaign on top track ($5/day)', done: false },
+  { task: 'Pitch to Spotify editorial 7 days before next release', done: false },
+  { task: 'DM 10 Tamil artists for collab / beat placement', done: false },
 ];
 
-const SPRINT_30 = [
-  { day: '1–3', task: 'Set up BeatStars Pro + upload 5 beats', badge: 'REVENUE', color: '#c9a84c' },
-  { day: '4–7', task: 'Release first track of month + pitch to Spotify editorial', badge: 'RELEASE', color: '#5078ff' },
-  { day: '8–10', task: 'Launch Google Ads campaign — $5/day on top track', badge: 'ADS', color: '#ff4d6d' },
-  { day: '11–14', task: 'Upload 5 more beats to BeatStars + run launch discount', badge: 'REVENUE', color: '#c9a84c' },
-  { day: '15–17', task: 'Second track drop + 3 Reels promoting it', badge: 'RELEASE', color: '#5078ff' },
-  { day: '18–21', task: 'DM 10 Tamil artists for beat collab / placement offers', badge: 'OUTREACH', color: '#3ecf8e' },
-  { day: '22–25', task: 'Review Ads performance — scale winning creative', badge: 'ADS', color: '#ff4d6d' },
-  { day: '26–30', task: 'Month wrap: track all revenue, set next month targets', badge: 'REVIEW', color: '#8a8070' },
+const ESTIMATES = [
+  { period: 'Month 1', est: '$50–100', note: 'BeatStars launch' },
+  { period: 'Month 2', est: '$100–200', note: 'Streams + beats' },
+  { period: 'Month 3', est: '$200–400', note: 'First commissions' },
+  { period: 'Month 6', est: '$500–1K', note: 'Full system active' },
 ];
 
 export default function Revenue() {
+  const [checked, setChecked] = useState({});
+  const toggle = i => setChecked(c => ({ ...c, [i]: !c[i] }));
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Revenue Summary */}
-      <HighlightBox variant="gold">
-        <SectionLabel>Revenue Architecture</SectionLabel>
-        <h2 style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.1rem', fontWeight: 700, color: '#e8e0d4', marginBottom: '0.75rem' }}>
-          7 Active Revenue Streams — Build them in parallel, not sequentially.
-        </h2>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <TagBadge variant="green">2 Active</TagBadge>
-          <TagBadge variant="gold">1 Setup</TagBadge>
-          <TagBadge variant="gray">4 Planned</TagBadge>
-        </div>
-      </HighlightBox>
-
-      {/* Revenue Streams List */}
-      <Card>
-        <SectionLabel>Revenue Streams</SectionLabel>
-        {REVENUE_STREAMS.map((r, i) => (
-          <RevenueItem key={i} {...r} />
-        ))}
-      </Card>
-
-      {/* BeatStars Action Plan */}
-      <Card variant="gold">
-        <SectionLabel>BeatStars Activation Plan</SectionLabel>
-        <ActionList items={BEATSTARS_ACTIONS} />
-      </Card>
-
-      {/* 30-Day Sprint */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Streams */}
       <div>
-        <SectionLabel>30-Day Revenue Sprint</SectionLabel>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {SPRINT_30.map((s, i) => (
-            <div
-              key={i}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                background: '#0f0f1c',
-                border: '1px solid #1e1e2e',
-                borderRadius: '8px',
-                padding: '0.85rem 1.25rem',
-                flexWrap: 'wrap',
-              }}
-            >
-              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: '#8a8070', width: '50px', flexShrink: 0 }}>
-                D{s.day}
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.t3, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '12px' }}>7 Revenue Streams</div>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: '4px', overflow: 'hidden' }}>
+          {STREAMS.map((s, i) => {
+            const ss = STATUS_STYLE[s.status];
+            return (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 18px', borderBottom: i < STREAMS.length - 1 ? `1px solid ${T.border}` : 'none', gap: '12px', flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontSize: '0.85rem', color: T.t1, fontWeight: 400, marginBottom: '2px' }}>{s.name}</div>
+                  <div style={{ fontSize: '0.72rem', color: T.t3 }}>{s.desc}</div>
+                </div>
+                <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.55rem', color: s.potential === 'HIGH' ? T.green : T.t2, background: s.potential === 'HIGH' ? 'rgba(62,207,142,0.08)' : 'rgba(255,255,255,0.04)', border: `1px solid ${s.potential === 'HIGH' ? 'rgba(62,207,142,0.2)' : T.border}`, borderRadius: '3px', padding: '2px 7px' }}>{s.potential}</span>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.55rem', color: ss.color, background: ss.bg, border: `1px solid ${ss.border}`, borderRadius: '3px', padding: '2px 7px' }}>{s.status}</span>
+                </div>
               </div>
-              <div style={{ flex: 1, fontSize: '0.85rem', color: '#e8e0d4' }}>{s.task}</div>
-              <span
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '0.6rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.1em',
-                  color: s.color,
-                  background: `${s.color}18`,
-                  border: `1px solid ${s.color}44`,
-                  padding: '0.2rem 0.5rem',
-                  borderRadius: '4px',
-                  flexShrink: 0,
-                }}
-              >
-                {s.badge}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* Revenue Projection */}
-      <Card variant="green" style={{ borderLeft: '3px solid #3ecf8e' }}>
-        <SectionLabel>6-Month Revenue Projection</SectionLabel>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem', marginTop: '0.5rem' }}>
-          {[
-            { month: 'Month 1', est: '$50–100', note: 'BeatStars launch' },
-            { month: 'Month 2', est: '$100–200', note: 'Streams growing' },
-            { month: 'Month 3', est: '$200–350', note: 'First commissions' },
-            { month: 'Month 4', est: '$300–500', note: 'YouTube monetised' },
-            { month: 'Month 5', est: '$400–700', note: 'Sync + beats scale' },
-            { month: 'Month 6', est: '$500–1,000', note: 'Full system active' },
-          ].map((p, i) => (
-            <div key={i} style={{ background: 'rgba(62,207,142,0.05)', border: '1px solid rgba(62,207,142,0.15)', borderRadius: '6px', padding: '0.75rem', textAlign: 'center' }}>
-              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: '#8a8070', marginBottom: '0.35rem' }}>{p.month}</div>
-              <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#3ecf8e', marginBottom: '0.2rem' }}>{p.est}</div>
-              <div style={{ fontSize: '0.68rem', color: '#8a8070' }}>{p.note}</div>
-            </div>
-          ))}
+      {/* Sprint + Estimates side by side */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+        {/* 30-Day Sprint */}
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `2px solid ${T.gold}`, borderRadius: '4px', padding: '20px' }}>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.gold, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '14px' }}>30-Day Sprint</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {SPRINT.map((s, i) => (
+              <div key={i} onClick={() => toggle(i)} style={{ display: 'flex', gap: '10px', cursor: 'pointer', alignItems: 'flex-start' }}>
+                <div style={{
+                  width: '16px', height: '16px', borderRadius: '3px', flexShrink: 0, marginTop: '1px',
+                  border: `1px solid ${checked[i] ? T.gold : 'rgba(255,255,255,0.15)'}`,
+                  background: checked[i] ? 'rgba(201,168,76,0.2)' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '0.65rem', color: T.gold,
+                }}>
+                  {checked[i] && '✓'}
+                </div>
+                <span style={{ fontSize: '0.8rem', color: checked[i] ? T.t3 : T.t1, lineHeight: 1.5, textDecoration: checked[i] ? 'line-through' : 'none', transition: 'all 0.15s' }}>{s.task}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </Card>
+
+        {/* Monthly Estimates */}
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `2px solid ${T.green}`, borderRadius: '4px', padding: '20px' }}>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.green, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '14px' }}>Revenue Projection</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {ESTIMATES.map((e, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < ESTIMATES.length - 1 ? `1px solid rgba(255,255,255,0.04)` : 'none' }}>
+                <div>
+                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.62rem', color: T.t3 }}>{e.period}</div>
+                  <div style={{ fontSize: '0.72rem', color: T.t2, marginTop: '1px' }}>{e.note}</div>
+                </div>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '1rem', color: T.green }}>{e.est}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

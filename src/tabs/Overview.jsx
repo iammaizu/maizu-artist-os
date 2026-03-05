@@ -1,104 +1,101 @@
 import React from 'react';
-import { Card, SectionLabel, ActionList, PriorityBox, TagBadge, HighlightBox } from '../components/ui';
 
-const stat = (label, value, sub) => ({ label, value, sub });
+const T = { t1: '#f0ece4', t2: '#888', t3: '#444', gold: '#c9a84c', blue: '#4f7cff', green: '#3ecf8e', red: '#ff4d6d', surface: '#0e0e1a', border: 'rgba(255,255,255,0.06)' };
 
-const STATS = [
-  stat('Monthly Listeners', '16,012', 'Spotify'),
-  stat('Top Track Streams', '140,238', 'Vethalaiya × Mainaru Mashup'),
-  stat('Followers', '4,497', 'Spotify'),
-  stat('Tracks Released', '18+', 'Across platforms'),
-];
+function Tag({ label, color = T.gold }) {
+  return (
+    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.58rem', letterSpacing: '0.1em', color, background: `${color}15`, border: `1px solid ${color}30`, borderRadius: '3px', padding: '2px 8px' }}>
+      {label}
+    </span>
+  );
+}
 
-const STRENGTHS = [
-  'Bilingual production (Tamil + mainstream)',
-  'Viral mashup potential — proven with 140K+ streams',
-  'IT background → data-driven growth mindset',
-  'Consistent discipline (gym + 9-5 + music)',
-  'Multi-DAW workflow (Logic + Ableton)',
-  'AI-augmented production via Suno AI',
-];
+function StatCard({ value, label, accent = T.gold }) {
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `2px solid ${accent}`, borderRadius: '4px', padding: '18px 20px' }}>
+      <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.8rem', color: accent, lineHeight: 1 }}>{value}</div>
+      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.t2, marginTop: '5px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</div>
+    </div>
+  );
+}
 
-const GAPS = [
-  'No consistent release cadence yet',
-  'Limited short-form video content (Reels/TikTok)',
-  'BeatStars catalog not fully monetised',
-  'No email list or direct fan channel',
-  'YouTube SEO underutilised',
-];
+function ListCard({ title, items, accent }) {
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `2px solid ${accent}`, borderRadius: '4px', padding: '20px' }}>
+      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: accent, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '12px' }}>{title}</div>
+      <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {items.map((item, i) => (
+          <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '0.82rem', color: T.t1, lineHeight: 1.5 }}>
+            <span style={{ color: accent, flexShrink: 0, marginTop: '2px', fontSize: '0.7rem' }}>→</span>{item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
-const PRIORITIES = [
-  { number: 1, title: '2 Drops / Month', description: 'Minimum release cadence. One main track + one remix or beat tape snippet to keep algorithm momentum.', color: '#c9a84c' },
-  { number: 2, title: 'Short-Form Video', description: 'Post 3× weekly Reels/TikTok. Behind-the-scenes studio, hook breakdowns, and mood edits.', color: '#5078ff' },
-  { number: 3, title: 'BeatStars Revenue', description: 'Upload 10 exclusive beats, price $29–$99 leases. Activate exclusive licensing for sync deals.', color: '#3ecf8e' },
-];
+function PriorityCard({ n, title, desc, color }) {
+  return (
+    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: '4px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: '-8px', right: '12px', fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '4.5rem', color, opacity: 0.06, lineHeight: 1, userSelect: 'none' }}>{n}</div>
+      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color, letterSpacing: '0.12em', marginBottom: '6px' }}>0{n}</div>
+      <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '0.95rem', color: T.t1, marginBottom: '6px' }}>{title}</div>
+      <div style={{ fontSize: '0.8rem', color: T.t2, lineHeight: 1.55 }}>{desc}</div>
+    </div>
+  );
+}
 
 export default function Overview() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Artist Header */}
-      <HighlightBox variant="gold">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <SectionLabel>Artist Profile</SectionLabel>
-            <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: '2.8rem', fontWeight: 800, color: '#e8e0d4', letterSpacing: '-0.02em', lineHeight: 1 }}>MAIZU</h1>
-            <p style={{ color: '#8a8070', fontSize: '0.88rem', marginTop: '0.4rem' }}>Tamil Music Producer · IT Professional · Chennai / Global</p>
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <TagBadge variant="gold">Producer</TagBadge>
-            <TagBadge variant="blue">Tamil Music</TagBadge>
-            <TagBadge variant="gray">IT Pro</TagBadge>
-          </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Artist card */}
+      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `2px solid ${T.gold}`, borderRadius: '4px', padding: '24px' }}>
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.58rem', color: T.t3, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '6px' }}>Artist Profile</div>
+        <h1 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '2.5rem', color: T.t1, letterSpacing: '-0.02em', lineHeight: 1, marginBottom: '6px' }}>MAIZU</h1>
+        <div style={{ fontSize: '0.82rem', color: T.t2, marginBottom: '14px' }}>Tamil Music Producer · IT Professional · Nocturnal</div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          <Tag label="PRODUCER" color={T.gold} />
+          <Tag label="TAMIL MUSIC" color={T.blue} />
+          <Tag label="IT PRO" color={T.t2} />
         </div>
-      </HighlightBox>
+      </div>
 
-      {/* Stats Row */}
+      {/* Metrics */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+        <StatCard value="16K" label="Monthly Listeners" accent={T.gold} />
+        <StatCard value="140K" label="Top Track Streams" accent={T.blue} />
+        <StatCard value="4.5K" label="Followers" accent={T.green} />
+        <StatCard value="18+" label="Tracks Released" accent="#a78bfa" />
+      </div>
+
+      {/* Strengths / Gaps */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
+        <ListCard title="Strengths" accent={T.green} items={[
+          'Bilingual production — Tamil + mainstream',
+          'Proven viral potential: 140K+ streams on mashup',
+          'IT background → data-driven growth mindset',
+          'Multi-DAW workflow: Logic + Ableton',
+          'AI-augmented production via Suno AI',
+          'Consistent discipline: gym + 9-5 + music',
+        ]} />
+        <ListCard title="Gaps to Close" accent={T.red} items={[
+          'No consistent short-form video content',
+          'BeatStars catalog not fully monetised',
+          'No email list or direct fan channel',
+          'YouTube SEO underutilised',
+          'Release cadence not yet consistent',
+        ]} />
+      </div>
+
+      {/* Priorities */}
       <div>
-        <SectionLabel>Current Metrics</SectionLabel>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
-          {STATS.map((s, i) => (
-            <Card key={i} variant={i === 0 ? 'gold' : i === 1 ? 'blue' : 'none'}>
-              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '1.5rem', fontWeight: 700, color: i < 2 ? '#c9a84c' : '#e8e0d4', lineHeight: 1 }}>
-                {s.value}
-              </div>
-              <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: '0.8rem', color: '#e8e0d4', marginTop: '0.4rem' }}>{s.label}</div>
-              <div style={{ fontSize: '0.72rem', color: '#8a8070', marginTop: '0.2rem' }}>{s.sub}</div>
-            </Card>
-          ))}
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.t3, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '12px' }}>Top 3 Priorities</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+          <PriorityCard n={1} color={T.gold} title="2 Drops / Month" desc="Minimum release cadence. One main track + one remix or beat snippet per month." />
+          <PriorityCard n={2} color={T.blue} title="Short-Form Video" desc="3× weekly Reels/TikTok. Studio BTS, hook breakdowns, Tamil producer POV." />
+          <PriorityCard n={3} color={T.green} title="BeatStars Revenue" desc="Upload 10 exclusive beats. Activate $29–$99 lease pricing immediately." />
         </div>
       </div>
-
-      {/* Strengths + Gaps */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-        <Card variant="green">
-          <SectionLabel>Strengths</SectionLabel>
-          <ActionList items={STRENGTHS} />
-        </Card>
-        <Card variant="red">
-          <SectionLabel>Gaps to Close</SectionLabel>
-          <ActionList items={GAPS} />
-        </Card>
-      </div>
-
-      {/* Priority Boxes */}
-      <div>
-        <SectionLabel>Top 3 Priorities</SectionLabel>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-          {PRIORITIES.map((p, i) => (
-            <PriorityBox key={i} {...p} />
-          ))}
-        </div>
-      </div>
-
-      {/* Toolkit */}
-      <Card>
-        <SectionLabel>Current Toolkit</SectionLabel>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-          {['Logic Pro', 'Ableton Live', 'Splice', 'Suno AI', 'Google Ads', 'BeatStars'].map((tool) => (
-            <TagBadge key={tool} variant="blue">{tool}</TagBadge>
-          ))}
-        </div>
-      </Card>
     </div>
   );
 }

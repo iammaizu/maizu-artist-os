@@ -1,144 +1,92 @@
 import React from 'react';
-import { Card, SectionLabel, ActionList, ScheduleBlock, WeekGrid, TagBadge } from '../components/ui';
 
-const WEEK_DAYS = [
-  {
-    name: 'MON',
-    tasks: ['Morning gym', 'Work 9–6PM', 'Beat sketch (30 min)', 'Content planning'],
-    highlight: false,
-  },
-  {
-    name: 'TUE',
-    tasks: ['Morning gym', 'Work 9–6PM', 'Production session (1hr)', 'TikTok hook write'],
-    highlight: false,
-  },
-  {
-    name: 'WED',
-    tasks: ['Morning gym', 'Work 9–6PM', 'MAIZU NIGHTS shoot', 'Post Reel 9PM'],
-    highlight: false,
-  },
-  {
-    name: 'THU',
-    tasks: ['Morning gym', 'Work 9–6PM', 'Mix review + polish', 'Email follow-ups'],
-    highlight: false,
-  },
-  {
-    name: 'FRI',
-    tasks: ['Morning gym', 'Work 9–6PM', 'Track release day', 'Engage audience 8PM'],
-    highlight: false,
-  },
-  {
-    name: 'SAT',
-    tasks: ['Extended session 3–4hrs', 'New beat from scratch', 'Content batch shoot', '9-5 vlog record'],
-    highlight: true,
-  },
-  {
-    name: 'SUN',
-    tasks: ['Mix + master session', 'Week plan review', 'Upload schedule set', 'Rest / recovery'],
-    highlight: true,
-  },
+const T = { t1: '#f0ece4', t2: '#888', t3: '#444', gold: '#c9a84c', blue: '#4f7cff', green: '#3ecf8e', surface: '#0e0e1a', border: 'rgba(255,255,255,0.06)' };
+
+const SCHEDULE = [
+  { time: '05:30', task: 'Wake up', note: 'No phone for 10 min' },
+  { time: '06:00', task: 'Gym', note: '60 min — non-negotiable' },
+  { time: '07:30', task: 'Breakfast + Listen', note: 'Study reference tracks' },
+  { time: '09:00', task: '9-5 Work', note: 'Deep work, music off' },
+  { time: '18:30', task: 'DAW Session', note: '45–60 min max — sketch OR polish' },
+  { time: '19:30', task: 'Content Window', note: 'Post + engage (30 min cap)' },
+  { time: '21:00', task: 'Late Session', note: 'Optional — only if energy allows' },
+  { time: '22:30', task: 'Wind down', note: 'No screens. Journal or read.' },
 ];
 
-const DAILY_SCHEDULE = [
-  { time: '05:30', task: 'Wake up', sub: 'No phone first 10 minutes' },
-  { time: '06:00', task: 'Gym', sub: '60 min workout' },
-  { time: '07:30', task: 'Breakfast + Listen', sub: 'Study reference tracks while eating' },
-  { time: '09:00', task: '9-5 Work', sub: 'Deep work mode, music off' },
-  { time: '18:30', task: 'DAW Session', sub: '45–60 min — sketch or polish, not both' },
-  { time: '19:30', task: 'Content Window', sub: 'Post, engage, reply DMs (30 min cap)' },
-  { time: '20:00', task: 'Dinner + Decompress', sub: 'No screens if possible' },
-  { time: '21:00', task: 'Late Session (optional)', sub: 'Only if energy is there — 45 min max' },
-  { time: '22:30', task: 'Wind down', sub: 'No social. Read or journal.' },
+const WEEKLY_OS = [
+  { day: 'MON', focus: 'Beat sketch + post preview', highlight: false },
+  { day: 'TUE', focus: 'Production session', highlight: false },
+  { day: 'WED', focus: 'Content shoot + post', highlight: false },
+  { day: 'THU', focus: 'Mix review + polish', highlight: false },
+  { day: 'FRI', focus: 'Release day + engage', highlight: false },
+  { day: 'SAT', focus: '3hr studio + batch content', highlight: true },
+  { day: 'SUN', focus: 'Mix/master + week review', highlight: true },
 ];
 
-const TOOLS = [
-  { name: 'Logic Pro', use: 'Primary DAW — full track production and mixing', badge: 'CORE', color: '#c9a84c' },
-  { name: 'Ableton Live', use: 'Live performance sketching + sound design', badge: 'CORE', color: '#c9a84c' },
-  { name: 'Splice', use: 'Sample discovery — curate Tamil + ethnic packs', badge: 'ACTIVE', color: '#5078ff' },
-  { name: 'Suno AI', use: 'Vocal idea generation, reference demos, concept testing', badge: 'AI', color: '#3ecf8e' },
-  { name: 'Google Ads', use: 'Paid promotion for top releases — YouTube pre-roll focus', badge: 'GROWTH', color: '#ff4d6d' },
-  { name: 'BeatStars', use: 'Beat licensing marketplace — needs full activation', badge: 'MONETISE', color: '#c9a84c' },
-  { name: 'Spotify for Artists', use: 'Playlist pitching, stats tracking, editorial push', badge: 'PLATFORM', color: '#5078ff' },
-  { name: 'CapCut / DaVinci', use: 'Video editing for Reels, Shorts, and content', badge: 'CONTENT', color: '#8a8070' },
-];
+const TOOLS = ['Logic Pro', 'Ableton Live', 'Splice', 'Suno AI', 'Later', 'DistroKid'];
 
-const WEEKEND_BLOCK = [
-  'Saturday 10AM–1PM: Primary production block — one full beat or full mix pass',
-  'Saturday 2PM–4PM: Content batch — shoot 5–7 clips for the week',
-  'Saturday 7PM: Optional collab session or track listening party (online/offline)',
-  'Sunday 9AM–12PM: Mix, master, and upload prep for Monday release',
-  'Sunday 2PM: Weekly review — what worked, what to drop, what to double down on',
+const OVERWHELM = [
+  { n: 1, step: 'Open one project', detail: 'Not to finish — just to open it and make one sound.' },
+  { n: 2, step: 'Post something small', detail: 'Behind the scenes, a loop, a thought. 60 seconds.' },
+  { n: 3, step: 'Drink water, go outside', detail: 'Music is a marathon. Recovery is production.' },
 ];
 
 export default function System() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Weekly Calendar Grid */}
-      <div>
-        <SectionLabel>Weekly Calendar Grid</SectionLabel>
-        <WeekGrid days={WEEK_DAYS} />
-        <div style={{ marginTop: '0.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#8a8070' }}>
-            <div style={{ width: '8px', height: '8px', background: 'rgba(201,168,76,0.4)', borderRadius: '2px' }} />
-            Weekend Power Block
-          </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Daily schedule */}
+      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `2px solid ${T.gold}`, borderRadius: '4px', padding: '20px' }}>
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.gold, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '14px' }}>Daily Schedule — Weekday</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {SCHEDULE.map((s, i) => (
+            <div key={i} style={{ display: 'flex', gap: '16px', padding: '9px 0', borderBottom: i < SCHEDULE.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', alignItems: 'flex-start' }}>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: T.gold, width: '46px', flexShrink: 0, paddingTop: '1px' }}>{s.time}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.83rem', color: T.t1, fontWeight: 400 }}>{s.task}</div>
+                <div style={{ fontSize: '0.72rem', color: T.t3, marginTop: '1px' }}>{s.note}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Daily Schedule */}
-      <Card variant="gold">
-        <SectionLabel>Daily Schedule (Weekday)</SectionLabel>
-        {DAILY_SCHEDULE.map((s, i) => (
-          <ScheduleBlock key={i} {...s} />
-        ))}
-      </Card>
-
-      {/* Weekend Power Block */}
-      <Card variant="blue">
-        <SectionLabel>Weekend Power Block</SectionLabel>
-        <ActionList items={WEEKEND_BLOCK} />
-      </Card>
-
-      {/* Tool Stack */}
+      {/* Weekly OS */}
       <div>
-        <SectionLabel>Tool Stack</SectionLabel>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {TOOLS.map((t, i) => (
-            <div
-              key={i}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: '#0f0f1c',
-                border: '1px solid #1e1e2e',
-                borderRadius: '8px',
-                padding: '0.85rem 1.25rem',
-                flexWrap: 'wrap',
-                gap: '0.5rem',
-              }}
-            >
-              <div>
-                <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '0.9rem', color: '#e8e0d4', marginRight: '0.75rem' }}>{t.name}</span>
-                <span style={{ fontSize: '0.8rem', color: '#8a8070' }}>{t.use}</span>
-              </div>
-              <span
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '0.6rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.1em',
-                  color: t.color,
-                  background: `${t.color}18`,
-                  border: `1px solid ${t.color}44`,
-                  padding: '0.2rem 0.5rem',
-                  borderRadius: '4px',
-                }}
-              >
-                {t.badge}
-              </span>
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.t3, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '12px' }}>Weekly Operating System</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', overflowX: 'auto' }}>
+          {WEEKLY_OS.map((d, i) => (
+            <div key={i} style={{ background: d.highlight ? 'rgba(201,168,76,0.04)' : T.surface, border: `1px solid ${d.highlight ? 'rgba(201,168,76,0.15)' : T.border}`, borderRadius: '4px', padding: '10px 8px', minWidth: '80px' }}>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.58rem', color: d.highlight ? T.gold : T.t3, letterSpacing: '0.1em', marginBottom: '5px' }}>{d.day}</div>
+              <div style={{ fontSize: '0.7rem', color: T.t2, lineHeight: 1.4 }}>{d.focus}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Tool stack + Overwhelm protocol side by side */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `2px solid ${T.blue}`, borderRadius: '4px', padding: '20px' }}>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.blue, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '14px' }}>Tool Stack</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {TOOLS.map(t => (
+              <span key={t} style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: T.blue, background: 'rgba(79,124,255,0.1)', border: '1px solid rgba(79,124,255,0.2)', borderRadius: '3px', padding: '4px 10px' }}>{t}</span>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `2px solid ${T.green}`, borderRadius: '4px', padding: '20px' }}>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.6rem', color: T.green, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '14px' }}>Overwhelm Protocol</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {OVERWHELM.map(o => (
+              <div key={o.n} style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: T.green, flexShrink: 0, width: '16px' }}>{o.n}.</div>
+                <div>
+                  <div style={{ fontSize: '0.82rem', color: T.t1, marginBottom: '2px' }}>{o.step}</div>
+                  <div style={{ fontSize: '0.72rem', color: T.t3, lineHeight: 1.45 }}>{o.detail}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
