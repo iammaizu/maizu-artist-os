@@ -6,6 +6,7 @@ import Brand from './tabs/Brand';
 import System from './tabs/System';
 import Growth from './tabs/Growth';
 import Revenue from './tabs/Revenue';
+import Analytics from './tabs/Analytics';
 
 const TABS = [
   { id: 'overview',  label: '01 Overview' },
@@ -15,6 +16,7 @@ const TABS = [
   { id: 'system',    label: '05 System' },
   { id: 'growth',    label: '06 Growth' },
   { id: 'revenue',   label: '07 Revenue' },
+  { id: 'analytics', label: '08 Analytics' },
 ];
 
 const TAB_COMPONENTS = {
@@ -25,6 +27,7 @@ const TAB_COMPONENTS = {
   system:   System,
   growth:   Growth,
   revenue:  Revenue,
+  analytics: Analytics,
 };
 
 export default function App() {
